@@ -1,4 +1,3 @@
-// app/todos/[id]/page.tsx
 'use client';
 
 import axios from 'axios';
@@ -6,10 +5,21 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+type TodoType = {
+  _id: string;
+  name: string;
+  priority: 'Low' | 'Medium' | 'High';
+  isCompleted: boolean;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 export default function TodoDetailPage() {
   const params = useParams();
-  const todoId = params?.id;
-  const [todo, setTodo] = useState<any>(null);
+  const todoId = params?.id as string;
+
+  const [todo, setTodo] = useState<TodoType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -79,8 +89,8 @@ export default function TodoDetailPage() {
         <div>
           <h3 className="text-sm font-medium text-gray-500">Tags</h3>
           <div className="flex flex-wrap gap-2 mt-1">
-            {todo.tags?.length > 0 ? (
-              todo.tags.map((tag: string, idx: number) => (
+            {todo.tags.length > 0 ? (
+              todo.tags.map((tag, idx) => (
                 <span
                   key={idx}
                   className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs"
