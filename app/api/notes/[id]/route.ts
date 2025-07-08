@@ -3,13 +3,10 @@ import mongoose from "mongoose";
 import { connect } from "@/dbConfig/dbConfig";
 import Note from "@/models/Note";
 
-// ✅ GET /api/notes/[id]
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, context: any) {
   await connect();
-  const { id } = params;
+
+  const id = context.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid Note ID" }, { status: 400 });
@@ -31,13 +28,10 @@ export async function GET(
   }
 }
 
-// ✅ PUT /api/notes/[id]
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequest, context: any) {
   await connect();
-  const { id } = params;
+
+  const id = context.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid Note ID" }, { status: 400 });
@@ -67,13 +61,10 @@ export async function PUT(
   }
 }
 
-// ✅ DELETE /api/notes/[id]
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, context: any) {
   await connect();
-  const { id } = params;
+
+  const id = context.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid Note ID" }, { status: 400 });
