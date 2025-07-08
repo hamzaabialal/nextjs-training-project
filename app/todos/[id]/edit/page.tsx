@@ -1,16 +1,24 @@
-// File: app/todos/[id]/edit/page.tsx
-
 'use client';
 
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+// ✅ Define correct type for Todo
+type TodoType = {
+  name: string;
+  priority: 'Low' | 'Medium' | 'High';
+  isCompleted: boolean;
+  tags: string[];
+};
+
 export default function TodoEditPage() {
   const router = useRouter();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [todo, setTodo] = useState({
+
+  // ✅ Use type in state
+  const [todo, setTodo] = useState<TodoType>({
     name: '',
     priority: 'Low',
     isCompleted: false,
@@ -29,7 +37,9 @@ export default function TodoEditPage() {
       }
     };
 
-    fetchTodo();
+    if (id) {
+      fetchTodo();
+    }
   }, [id]);
 
   const handleUpdate = async () => {
@@ -66,7 +76,7 @@ export default function TodoEditPage() {
           <select
             className="w-full px-3 py-2 border rounded text-black"
             value={todo.priority}
-            onChange={(e) => setTodo({ ...todo, priority: e.target.value })}
+            onChange={(e) => setTodo({ ...todo, priority: e.target.value as TodoType['priority'] })}
           >
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
@@ -81,7 +91,10 @@ export default function TodoEditPage() {
             className="w-full px-3 py-2 border rounded text-black"
             value={todo.tags.join(', ')}
             onChange={(e) =>
-              setTodo({ ...todo, tags: e.target.value.split(',').map((tag) => tag.trim()) })
+              setTodo({
+                ...todo,
+                tags: e.target.value.split(',').map((tag) => tag.trim()).filter(Boolean),
+              })
             }
           />
         </div>
