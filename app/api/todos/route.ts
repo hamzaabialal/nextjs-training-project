@@ -38,12 +38,21 @@ export async function POST(request: NextRequest){
 
 
 export async function GET(request: NextRequest){
-    console.log("👀 /api/notes hit");
+    console.log("/api/notes hit");
     await connect()
-    console.log("✅ Connected to DB");
+    console.log("Connected to DB");
 
     try {
-        const todos = await Todo.find().sort({ createdAt: -1 });
+        const { searchParams } = new URL(request.url)
+        const search = searchParams.get("search")
+        let filter = {};
+        if (search){
+            filter = {
+                name :{ $regex: search, $options: "i"},
+            };
+        }
+
+        const todos = await Todo.find(filter).sort({ createdAt: -1 });
         return NextResponse.json({
             todos
         })

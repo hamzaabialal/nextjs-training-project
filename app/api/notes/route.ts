@@ -6,7 +6,15 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest){
     await connect()
     try {
-        const notes = await Note.find().sort({createdAt: -1})
+        const { searchParams } = new URL(request.url)
+        const search = searchParams.get("search")
+        let filter = {} 
+        if (search) {
+            filter = {
+            title : { $regex: search, $options: "i"},
+            };
+        }
+        const notes = await Note.find(filter).sort({createdAt: -1})
         return NextResponse.json({
             notes
         })

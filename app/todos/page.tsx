@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-// ✅ Define the Todo type
+
 export type Todo = {
   _id: string;
   name: string;
@@ -16,20 +16,24 @@ export type Todo = {
 };
 
 export default function TodoListPage() {
+  const [search, setSearch] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
 
   useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const res = await axios.get('/api/todos');
-        setTodos(res.data.todos);
-      } catch (error) {
-        console.log("GET API Error", error);
-      }
-    };
+  const fetchTodos = async () => {
+    try {
+      const res = await axios.get(`/api/todos?search=${search}`);
+      setTodos(res.data.todos);
+    } catch (error) {
+      console.log("GET API Error", error);
+    }
+  };
 
-    fetchTodos();
-  }, []);
+  fetchTodos();
+}, [search]);
+
+
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-tr from-slate-100 to-blue-50 px-4 py-8">
@@ -43,6 +47,13 @@ export default function TodoListPage() {
             + Add New
           </Link>
         </div>
+        <input
+  type="text"
+  placeholder="🔎 Search by name..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="w-full mb-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black-400 text-black"
+/>
 
         {todos.length > 0 ? (
           <ul className="space-y-3">

@@ -5,11 +5,12 @@ import Link from 'next/link';
 
 export default function NotesPage() {
   const [notes, setNotes] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await axios.get('/api/notes/');
+        const res = await axios.get(`/api/notes/?search=${search}`);
         console.log(res.data.notes);
         setNotes(res.data.notes);
       } catch (error: any) {
@@ -18,7 +19,7 @@ export default function NotesPage() {
     };
 
     fetchNotes();
-  }, []);
+  }, [search]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 p-6">
@@ -31,7 +32,15 @@ export default function NotesPage() {
           >
             + New Note
           </Link>
+
         </div>
+                          <input
+  type="text"
+  placeholder="🔎 Search by title..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="w-full mb-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black-400 text-black"
+/>
 
         {notes.length > 0 ? (
           <ul className="space-y-4">
