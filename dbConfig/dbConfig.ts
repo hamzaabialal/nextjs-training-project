@@ -15,9 +15,7 @@ export async function connect() {
     }
 
     await mongoose.connect(uri, {
-      dbName: 'mydb', // Optional, safe to include
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      dbName: 'mydb', // Only keep this
     });
 
     const connection = mongoose.connection;
