@@ -3,16 +3,13 @@ import mongoose from "mongoose";
 import { connect } from "@/dbConfig/dbConfig";
 import Note from "@/models/Note";
 
-type Context = {
-  params: {
-    id: string;
-  };
-};
-
-// GET /api/notes/[id]
-export async function GET(req: NextRequest, context: Context) {
+// ✅ GET /api/notes/[id]
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   await connect();
-  const { id } = context.params;
+  const { id } = params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid Note ID" }, { status: 400 });
@@ -20,7 +17,6 @@ export async function GET(req: NextRequest, context: Context) {
 
   try {
     const note = await Note.findById(id).lean();
-
     if (!note) {
       return NextResponse.json({ message: "Note not found" }, { status: 404 });
     }
@@ -35,19 +31,21 @@ export async function GET(req: NextRequest, context: Context) {
   }
 }
 
-// PUT /api/notes/[id]
-export async function PUT(req: NextRequest, context: Context) {
+// ✅ PUT /api/notes/[id]
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   await connect();
-  const { id } = context.params;
+  const { id } = params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid Note ID" }, { status: 400 });
   }
 
   try {
-    const updatedData = await req.json();
-
-    const updatedNote = await Note.findByIdAndUpdate(id, updatedData, {
+    const updateData = await req.json();
+    const updatedNote = await Note.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
     });
@@ -69,10 +67,13 @@ export async function PUT(req: NextRequest, context: Context) {
   }
 }
 
-// DELETE /api/notes/[id]
-export async function DELETE(req: NextRequest, context: Context) {
+// ✅ DELETE /api/notes/[id]
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   await connect();
-  const { id } = context.params;
+  const { id } = params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid Note ID" }, { status: 400 });
@@ -80,7 +81,6 @@ export async function DELETE(req: NextRequest, context: Context) {
 
   try {
     const deletedNote = await Note.findByIdAndDelete(id);
-
     if (!deletedNote) {
       return NextResponse.json({ message: "Note not found" }, { status: 404 });
     }
