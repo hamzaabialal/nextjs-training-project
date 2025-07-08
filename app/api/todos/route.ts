@@ -38,7 +38,10 @@ export async function POST(request: NextRequest){
 
 
 export async function GET(request: NextRequest){
+    console.log("👀 /api/notes hit");
     await connect()
+    console.log("✅ Connected to DB");
+
     try {
         const todos = await Todo.find().sort({ createdAt: -1 });
         return NextResponse.json({
