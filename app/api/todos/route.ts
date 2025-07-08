@@ -45,11 +45,14 @@ export async function GET(request: NextRequest){
     try {
         const { searchParams } = new URL(request.url)
         const search = searchParams.get("search")
-        let filter = {};
-        if (search){
-            filter = {
-                name :{ $regex: search, $options: "i"},
-            };
+        const priorityFilter =  searchParams.get("priority")
+        const filter: any = {};
+        if (search) {
+    filter.name = { $regex: search, $options: "i" };
+  }
+
+        if (priorityFilter) {
+            filter.priority = { $regex: priorityFilter, $options: "i" };
         }
 
         const todos = await Todo.find(filter).sort({ createdAt: -1 });

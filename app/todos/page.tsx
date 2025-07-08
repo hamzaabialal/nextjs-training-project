@@ -18,19 +18,26 @@ export type Todo = {
 export default function TodoListPage() {
   const [search, setSearch] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [priority, setPriority] = useState("");
+
+
 
   useEffect(() => {
-  const fetchTodos = async () => {
-    try {
-      const res = await axios.get(`/api/todos?search=${search}`);
-      setTodos(res.data.todos);
-    } catch (error) {
-      console.log("GET API Error", error);
-    }
-  };
+    const fetchTodos = async () => {
+      try {
+        const queryParams = new URLSearchParams();
+        if (search) queryParams.append("search", search);
+        if (priority) queryParams.append("priority", priority);
 
-  fetchTodos();
-}, [search]);
+        const res = await axios.get(`/api/todos?${queryParams.toString()}`);
+        setTodos(res.data.todos);
+      } catch (error) {
+        console.log("GET API Error", error);
+      }
+    };
+
+    fetchTodos();
+  }, [search, priority]);
 
 
 
@@ -54,6 +61,16 @@ export default function TodoListPage() {
   onChange={(e) => setSearch(e.target.value)}
   className="w-full mb-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black-400 text-black"
 />
+        <select
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          className="w-full mb-6 px-4 py-2 border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-black-400 text-black"
+        >
+          <option value="">🎯 Filter by Priority</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
 
         {todos.length > 0 ? (
           <ul className="space-y-3">
