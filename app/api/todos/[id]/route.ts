@@ -3,10 +3,17 @@ import mongoose from 'mongoose';
 import { connect } from '@/dbConfig/dbConfig';
 import Todo from '@/models/Todo';
 
-// GET /api/todos/[id]
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
+// This type is inferred from Next.js route handler definitions.
+interface RouteContext {
+  params: {
+    id: string;
+  };
+}
+
+// ✅ GET /api/todos/[id]
+export async function GET(req: NextRequest, context: RouteContext) {
   await connect();
-  const { id } = context.params;
+  const id = context.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: 'Invalid Todo ID' }, { status: 400 });
@@ -20,17 +27,14 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
 
     return NextResponse.json({ data: todo });
   } catch (error: any) {
-    return NextResponse.json(
-      { message: 'Error retrieving todo', error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Server error', error: error.message }, { status: 500 });
   }
 }
 
-// PUT /api/todos/[id]
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+// ✅ PUT /api/todos/[id]
+export async function PUT(req: NextRequest, context: RouteContext) {
   await connect();
-  const { id } = context.params;
+  const id = context.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: 'Invalid Todo ID' }, { status: 400 });
@@ -52,17 +56,14 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
       data: updatedTodo,
     });
   } catch (error: any) {
-    return NextResponse.json(
-      { message: 'Failed to update todo', error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Update failed', error: error.message }, { status: 500 });
   }
 }
 
-// DELETE /api/todos/[id]
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+// ✅ DELETE /api/todos/[id]
+export async function DELETE(req: NextRequest, context: RouteContext) {
   await connect();
-  const { id } = context.params;
+  const id = context.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json({ message: 'Invalid Todo ID' }, { status: 400 });
@@ -75,13 +76,10 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
     }
 
     return NextResponse.json({
-      message: 'Todo successfully deleted ✅',
+      message: 'Todo deleted successfully',
       id: deletedTodo._id,
     });
   } catch (error: any) {
-    return NextResponse.json(
-      { message: 'Failed to delete todo', error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Delete failed', error: error.message }, { status: 500 });
   }
 }
