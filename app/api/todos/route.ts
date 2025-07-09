@@ -46,6 +46,7 @@ export async function GET(request: NextRequest){
         const { searchParams } = new URL(request.url)
         const search = searchParams.get("search")
         const priorityFilter =  searchParams.get("priority")
+        const tag_search =  searchParams.get("tag")
         const filter: any = {};
         if (search) {
     filter.name = { $regex: search, $options: "i" };
@@ -53,6 +54,11 @@ export async function GET(request: NextRequest){
 
         if (priorityFilter) {
             filter.priority = { $regex: priorityFilter, $options: "i" };
+        }
+        if (tag_search){
+            filter.tags = {
+                $regex : tag_search, $options : "i"
+            }
         }
 
         const todos = await Todo.find(filter).sort({ createdAt: -1 });

@@ -19,6 +19,7 @@ export default function TodoListPage() {
   const [search, setSearch] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
   const [priority, setPriority] = useState("");
+  const [tag, setTag] = useState("")
 
 
 
@@ -28,7 +29,7 @@ export default function TodoListPage() {
         const queryParams = new URLSearchParams();
         if (search) queryParams.append("search", search);
         if (priority) queryParams.append("priority", priority);
-
+        if(tag) queryParams.append("tag", tag)
         const res = await axios.get(`/api/todos?${queryParams.toString()}`);
         setTodos(res.data.todos);
       } catch (error) {
@@ -37,7 +38,7 @@ export default function TodoListPage() {
     };
 
     fetchTodos();
-  }, [search, priority]);
+  }, [search, priority, tag]);
 
 
 
@@ -71,6 +72,13 @@ export default function TodoListPage() {
           <option value="Medium">Medium</option>
           <option value="High">High</option>
         </select>
+                <input
+                type="text"
+                placeholder="🔎 Search by tag..."
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}
+                className="w-full mb-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black-400 text-black"
+              />
 
         {todos.length > 0 ? (
           <ul className="space-y-3">

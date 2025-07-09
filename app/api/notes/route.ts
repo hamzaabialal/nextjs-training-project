@@ -8,12 +8,23 @@ export async function GET(request: NextRequest){
     try {
         const { searchParams } = new URL(request.url)
         const search = searchParams.get("search")
-        let filter = {} 
+        const priority_search = searchParams.get("priority")
+        const tag_search = searchParams.get("tag") 
+        let filter: any = {} 
         if (search) {
-            filter = {
-            title : { $regex: search, $options: "i"},
-            };
+            filter.title = { $regex: search, $options: "i"}
         }
+        if (priority_search){
+            filter.priority = { $regex: priority_search, $options: "i"
+            }
+        }
+        if (tag_search) {
+            filter.tags = {
+                $regex : tag_search, $options:"i"
+            }
+        }
+        
+
         const notes = await Note.find(filter).sort({createdAt: -1})
         return NextResponse.json({
             notes
